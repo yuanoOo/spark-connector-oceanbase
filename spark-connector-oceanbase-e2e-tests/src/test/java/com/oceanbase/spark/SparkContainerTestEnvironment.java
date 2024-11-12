@@ -119,7 +119,9 @@ public abstract class SparkContainerTestEnvironment extends OceanBaseMySQLTestBa
                     dependencyResources
                             .filter(
                                     file ->
-                                            file.toAbsolutePath().toString().contains(SPARK_VERSION.substring(0, 3))
+                                            file.toAbsolutePath()
+                                                            .toString()
+                                                            .contains(SPARK_VERSION.substring(0, 3))
                                                     || file.toAbsolutePath()
                                                             .toString()
                                                             .contains("mysql"))
