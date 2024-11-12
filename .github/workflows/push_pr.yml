@@ -28,4 +28,4 @@ jobs:
     uses: ./.github/workflows/test.yml
     with:
       module: spark-connector-oceanbase-e2e-tests
-      maven_opts: "-Dflink_version=${{ matrix.spark_version }}"
+      maven_opts: "-D spark_version=${{ matrix.spark_version }}"
