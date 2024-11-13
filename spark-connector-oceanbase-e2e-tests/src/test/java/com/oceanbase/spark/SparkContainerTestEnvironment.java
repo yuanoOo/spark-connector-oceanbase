@@ -46,7 +46,7 @@ public abstract class SparkContainerTestEnvironment extends OceanBaseMySQLTestBa
 
     private static final Logger LOG = LoggerFactory.getLogger(SparkContainerTestEnvironment.class);
 
-    private static final String SPARK_VERSION = "2.4.6"; // System.getProperty("spark_version");
+    private static final String SPARK_VERSION = System.getProperty("spark_version");
     private static final String MODULE_DIRECTORY = System.getProperty("moduleDir", "");
 
     private static final String INTER_CONTAINER_JM_ALIAS = "spark";
