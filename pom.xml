@@ -37,7 +37,7 @@ under the License.
         <slf4j.version>1.7.32</slf4j.version>
         <log4j.version>2.17.1</log4j.version>
         <junit4.version>4.13.2</junit4.version>
-        <junit5.version>5.8.1</junit5.version>
+        <junit5.version>5.11.3</junit5.version>
         <spotless.version>2.27.1</spotless.version>
         <target.java.version>1.8</target.java.version>
         <assertj.version>3.23.1</assertj.version>
