@@ -11,6 +11,10 @@ on:
       - main
       - 'release-*'
 
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   spark-connector-oceanbase:
     uses: ./.github/workflows/test.yml
