@@ -26,8 +26,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -65,7 +65,7 @@ public class OceanBaseE2eITCase extends SparkContainerTestEnvironment {
     }
 
     @Test
-    @DisabledIfEnvironmentVariable(
+    @DisabledIfSystemProperty(
             named = "spark_version",
             matches = "2.4.6",
             disabledReason =
@@ -127,7 +127,7 @@ public class OceanBaseE2eITCase extends SparkContainerTestEnvironment {
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(
+    @EnabledIfSystemProperty(
             named = "spark_version",
             matches = "2.4.6",
             disabledReason =
