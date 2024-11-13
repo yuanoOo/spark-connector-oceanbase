@@ -16,6 +16,8 @@
 
 package com.oceanbase.spark;
 
+import com.oceanbase.spark.utils.SparkContainerTestEnvironment;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,8 +28,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -65,9 +67,9 @@ public class OceanBaseE2eITCase extends SparkContainerTestEnvironment {
     }
 
     @Test
-    @DisabledIfEnvironmentVariable(
+    @DisabledIfSystemProperty(
             named = "spark_version",
-            matches = "2.4.6",
+            matches = "^(2\\.4\\.[0-9])$",
             disabledReason =
                     "This is because the spark 2.x docker image fails to execute the spark-sql command.")
     public void testInsertValues() throws Exception {
@@ -127,9 +129,9 @@ public class OceanBaseE2eITCase extends SparkContainerTestEnvironment {
     }
 
     @Test
-    @EnabledIfEnvironmentVariable(
+    @EnabledIfSystemProperty(
             named = "spark_version",
-            matches = "2.4.6",
+            matches = "^(2\\.4\\.[0-9])$",
             disabledReason =
                     "This is because the spark 2.x docker image fails to execute the spark-sql command.")
     public void testInsertValuesSpark2() throws Exception {
