@@ -26,6 +26,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -63,6 +65,11 @@ public class OceanBaseE2eITCase extends SparkContainerTestEnvironment {
     }
 
     @Test
+    @DisabledIfEnvironmentVariable(
+            named = "spark_version",
+            matches = "2.4.6",
+            disabledReason =
+                    "This is because the spark 2.x docker image fails to execute the spark-sql command.")
     public void testInsertValues() throws Exception {
         List<String> sqlLines = new ArrayList<>();
 
@@ -100,6 +107,78 @@ public class OceanBaseE2eITCase extends SparkContainerTestEnvironment {
                         + "       (109, 'spare tire', '24 inch spare tire', 22.2);");
 
         submitSQLJob(sqlLines, getResource(SINK_CONNECTOR_NAME), getResource(MYSQL_CONNECTOR_JAVA));
+
+        List<String> expected =
+                Arrays.asList(
+                        "101,scooter,Small 2-wheel scooter,3.1400000000",
+                        "102,car battery,12V car battery,8.1000000000",
+                        "103,12-pack drill bits,12-pack of drill bits with sizes ranging from #40 to #3,0.8000000000",
+                        "104,hammer,12oz carpenter's hammer,0.7500000000",
+                        "105,hammer,14oz carpenter's hammer,0.8750000000",
+                        "106,hammer,16oz carpenter's hammer,1.0000000000",
+                        "107,rocks,box of assorted rocks,5.3000000000",
+                        "108,jacket,water resistent black wind breaker,0.1000000000",
+                        "109,spare tire,24 inch spare tire,22.2000000000");
+
+        waitingAndAssertTableCount("products", expected.size());
+
+        List<String> actual = queryTable("products");
+        assertEqualsInAnyOrder(expected, actual);
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(
+            named = "spark_version",
+            matches = "2.4.6",
+            disabledReason =
+                    "This is because the spark 2.x docker image fails to execute the spark-sql command.")
+    public void testInsertValuesSpark2() throws Exception {
+        List<String> shellLines = new ArrayList<>();
+
+        shellLines.add(
+                "val df = spark\n"
+                        + "  .createDataFrame(\n"
+                        + "    Seq(\n"
+                        + "      (101, \"scooter\", \"Small 2-wheel scooter\", 3.14),\n"
+                        + "      (102, \"car battery\", \"12V car battery\", 8.1),\n"
+                        + "      (\n"
+                        + "        103,\n"
+                        + "        \"12-pack drill bits\",\n"
+                        + "        \"12-pack of drill bits with sizes ranging from #40 to #3\",\n"
+                        + "        0.8),\n"
+                        + "      (104, \"hammer\", \"12oz carpenter's hammer\", 0.75),\n"
+                        + "      (105, \"hammer\", \"14oz carpenter's hammer\", 0.875),\n"
+                        + "      (106, \"hammer\", \"16oz carpenter's hammer\", 1.0),\n"
+                        + "      (107, \"rocks\", \"box of assorted rocks\", 5.3),\n"
+                        + "      (108, \"jacket\", \"water resistent black wind breaker\", 0.1),\n"
+                        + "      (109, \"spare tire\", \"24 inch spare tire\", 22.2)\n"
+                        + "    ))\n"
+                        + "  .toDF(\"id\", \"name\", \"description\", \"weight\")");
+
+        shellLines.add(
+                String.format(
+                        "import org.apache.spark.sql.SaveMode\n"
+                                + "df.write\n"
+                                + "  .format(\"oceanbase\")\n"
+                                + "  .mode(saveMode = SaveMode.Append)\n"
+                                + "  .option(\"host\", \"%s\")\n"
+                                + "  .option(\"sql-port\", \"%s\")\n"
+                                + "  .option(\"username\", \"%s\")\n"
+                                + "  .option(\"password\", \"%s\")\n"
+                                + "  .option(\"table-name\", \"products\")\n"
+                                + "  .option(\"schema-name\", \"%s\")\n"
+                                + "  .option(\"direct-load.enabled\", value = true)\n"
+                                + "  .option(\"direct-load.rpc-port\", value = \"%s\")\n"
+                                + "  .save()",
+                        getHostInContainer(),
+                        getPortInContainer(),
+                        getUsername(),
+                        getPassword(),
+                        getSchemaName(),
+                        getRpcPortInContainer()));
+
+        submitSparkShellJob(
+                shellLines, getResource(SINK_CONNECTOR_NAME), getResource(MYSQL_CONNECTOR_JAVA));
 
         List<String> expected =
                 Arrays.asList(

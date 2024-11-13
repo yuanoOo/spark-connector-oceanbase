@@ -185,6 +185,33 @@ public abstract class SparkContainerTestEnvironment extends OceanBaseMySQLTestBa
         }
     }
 
+    public void submitSparkShellJob(List<String> shellLines, Path... jars)
+            throws IOException, InterruptedException {
+        final List<String> commands = new ArrayList<>();
+        Path script = new File(temporaryFolder.toFile(), UUID.randomUUID().toString()).toPath();
+        Files.write(script, shellLines);
+        sparkContainer.copyFileToContainer(MountableFile.forHostPath(script), "/tmp/script.scala");
+        commands.add("--jars");
+        String jarStr =
+                Arrays.stream(jars)
+                        .map(
+                                jar ->
+                                        copyAndGetContainerPath(
+                                                sparkContainer, jar.toAbsolutePath().toString()))
+                        .collect(Collectors.joining(","));
+        commands.add(jarStr);
+        commands.add("-i /tmp/script.scala");
+
+        String command = String.format("spark-shell %s", String.join(" ", commands));
+        LOG.info(command);
+        Container.ExecResult execResult = sparkContainer.execInContainer("bash", "-c", command);
+        LOG.info(execResult.getStdout());
+        LOG.error(execResult.getStderr());
+        if (execResult.getExitCode() != 0) {
+            throw new AssertionError("Failed when submitting the SQL job.");
+        }
+    }
+
     private String copyAndGetContainerPath(GenericContainer<?> container, String filePath) {
         Path path = Paths.get(filePath);
         String containerPath = "/opt/bitnami/spark/jars/" + path.getFileName();
