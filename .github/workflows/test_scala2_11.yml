@@ -15,7 +15,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - name: Free disk space on Ubuntu runner
+      - name: Free dis space on Ubuntu runner
         uses: kfir4444/free-disk-space@main
         with:
           tool-cache: false
