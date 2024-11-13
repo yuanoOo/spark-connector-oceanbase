@@ -67,7 +67,7 @@ public class OceanBaseE2eITCase extends SparkContainerTestEnvironment {
     @Test
     @DisabledIfSystemProperty(
             named = "spark_version",
-            matches = "2.4.6",
+            matches = "^(2\\.4\\.[0-9])$",
             disabledReason =
                     "This is because the spark 2.x docker image fails to execute the spark-sql command.")
     public void testInsertValues() throws Exception {
@@ -129,7 +129,7 @@ public class OceanBaseE2eITCase extends SparkContainerTestEnvironment {
     @Test
     @EnabledIfSystemProperty(
             named = "spark_version",
-            matches = "2.4.6",
+            matches = "^(2\\.4\\.[0-9])$",
             disabledReason =
                     "This is because the spark 2.x docker image fails to execute the spark-sql command.")
     public void testInsertValuesSpark2() throws Exception {
