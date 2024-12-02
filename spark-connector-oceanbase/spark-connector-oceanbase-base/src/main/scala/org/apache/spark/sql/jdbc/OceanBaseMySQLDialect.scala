@@ -34,7 +34,7 @@ import java.util.Locale
  * Since [[MySQLDialect]] is a case object, it cannot be inherited. So we need to rewrite the
  * methods one by one.
  */
-case object OceanBaseMySQLDialect extends JdbcDialect with SQLConfHelper {
+case object OceanBaseMySQLDialect extends JdbcDialect {
 
   override def canHandle(url: String): Boolean =
     url.toLowerCase(Locale.ROOT).startsWith("jdbc:oceanbase") || url
