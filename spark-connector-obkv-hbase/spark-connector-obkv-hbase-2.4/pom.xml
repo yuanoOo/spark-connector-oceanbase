@@ -93,7 +93,6 @@ under the License.
                                     <include>com.alibaba:*</include>
                                     <include>com.alipay.*:*</include>
                                     <include>com.google.*:*</include>
-                                    <include>org.apache.hadoop*:*</include>
                                     <include>org.apache.hbase*:*</include>
                                     <include>mysql:mysql-connector-java</include>
                                 </includes>
