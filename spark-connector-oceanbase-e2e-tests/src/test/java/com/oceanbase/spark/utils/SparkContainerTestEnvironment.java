@@ -178,6 +178,7 @@ public abstract class SparkContainerTestEnvironment extends OceanBaseMySQLTestBa
         commands.add("-f /tmp/script.sql");
 
         String command = String.format("spark-sql %s", String.join(" ", commands));
+        LOG.info(sqlLines.toString());
         LOG.info(command);
         Container.ExecResult execResult = sparkContainer.execInContainer("bash", "-c", command);
         LOG.info(execResult.getStdout());
@@ -205,6 +206,7 @@ public abstract class SparkContainerTestEnvironment extends OceanBaseMySQLTestBa
         commands.add("-i /tmp/script.scala");
 
         String command = String.format("timeout 2m spark-shell %s", String.join(" ", commands));
+        LOG.info(shellLines.toString());
         LOG.info(command);
         Container.ExecResult execResult = sparkContainer.execInContainer("bash", "-c", command);
         LOG.info(execResult.getStdout());
