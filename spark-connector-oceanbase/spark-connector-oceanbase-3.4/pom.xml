@@ -78,7 +78,8 @@ under the License.
                             </artifactSet>
                             <relocations>
                                 <relocation>
-                                    <!-- Resolve dependency conflicts in direct-load API. -->
+                                    <!-- Resolve dependency conflicts in direct-load API.
+                                         This is only needed for Spark 3.4. -->
                                     <pattern>org.apache.logging</pattern>
                                     <shadedPattern>shade.org.apache.logging</shadedPattern>
                                 </relocation>
