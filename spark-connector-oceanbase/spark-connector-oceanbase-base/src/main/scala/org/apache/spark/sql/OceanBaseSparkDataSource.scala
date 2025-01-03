@@ -16,7 +16,7 @@
 package org.apache.spark.sql
 
 import com.oceanbase.spark.config.OceanBaseConfig
-import com.oceanbase.spark.jdbc.OBJdbcUtils.getCompatibleMode
+import com.oceanbase.spark.jdbc.OBJdbcUtils.{getCompatibleMode, getDbTable}
 import com.oceanbase.spark.sql.OceanBaseSparkSource
 
 import OceanBaseSparkDataSource.{JDBC_TXN_ISOLATION_LEVEL, JDBC_URL, JDBC_USER, SHORT_NAME}
@@ -74,7 +74,7 @@ class OceanBaseSparkDataSource extends JdbcRelationProvider {
       paraMap =
         paraMap + (JDBCOptions.JDBC_QUERY_STRING -> parameters(JDBCOptions.JDBC_QUERY_STRING))
     } else {
-      paraMap = paraMap + (JDBCOptions.JDBC_TABLE_NAME -> oceanBaseConfig.getTableName)
+      paraMap = paraMap + (JDBCOptions.JDBC_TABLE_NAME -> getDbTable(oceanBaseConfig))
     }
 
     // Set dialect
