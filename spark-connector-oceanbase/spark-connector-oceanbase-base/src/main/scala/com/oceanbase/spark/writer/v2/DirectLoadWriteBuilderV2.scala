@@ -27,6 +27,7 @@ import org.apache.spark.sql.types.StructType
 
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 
+/** Direct-load writing implementation based on Spark DataSource V2 API. */
 case class DirectLoadWriteBuilderV2(schema: StructType, options: JDBCOptions) extends WriteBuilder {
   override def build(): Write = new DirectLoadWrite(schema, options)
 }
