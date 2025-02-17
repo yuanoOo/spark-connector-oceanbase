@@ -196,9 +196,9 @@ object JDBCLimitRDD extends Logging {
 
   /**
    * Copy from
-   * org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils#getSchema(java.sql.ResultSet,
-   * org.apache.spark.sql.jdbc.JdbcDialect, boolean) to solve the compatibility problem with lower
-   * versions of Spark.
+   * <code>org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils#getSchema(java.sql.ResultSet,
+   * org.apache.spark.sql.jdbc.JdbcDialect, boolean)</code> to solve the compatibility problem with
+   * lower versions of Spark.
    *
    * Note: This is temporary workaround, pending BATCH_READ refactoring.
    */
@@ -320,12 +320,12 @@ object JDBCLimitRDD extends Logging {
       case java.sql.Types.VARBINARY => BinaryType
       case java.sql.Types.VARCHAR => StringType
       case _ =>
-        throw QueryExecutionErrors.unrecognizedSqlTypeError(sqlType)
+        throw new RuntimeException(s"Unsupported type: $sqlType ")
       // scalastyle:on
     }
 
     if (answer == null) {
-      throw QueryExecutionErrors.unsupportedJdbcTypeError(JDBCType.valueOf(sqlType).getName)
+      throw new RuntimeException(s"Unsupported type: $sqlType ")
     }
     answer
   }
