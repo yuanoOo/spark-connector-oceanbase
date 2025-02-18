@@ -196,11 +196,21 @@ object JDBCLimitRDD extends Logging {
 
   /**
    * Copy from
-   * <code>org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils#getSchema(java.sql.ResultSet,
-   * org.apache.spark.sql.jdbc.JdbcDialect, boolean)</code> to solve the compatibility problem with
-   * lower versions of Spark.
+   * [[org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils.getSchema(ResultSet, JdbcDialect, Boolean)]]
+   * to solve compatibility issues with lower Spark versions.
    *
-   * Note: This is temporary workaround, pending BATCH_READ refactoring.
+   * @note
+   *   This is a temporary solution pending BATCH_READ refactoring.
+   * @param resultSet
+   *   JDBC ResultSet containing metadata
+   * @param dialect
+   *   Spark JdbcDialect implementation
+   * @param alwaysNullable
+   *   If true, forces all columns to be nullable
+   * @return
+   *   Catalyst schema (StructType) representation
+   * @see
+   *   [[org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils]]
    */
   def getSchema(
       resultSet: ResultSet,
@@ -216,22 +226,17 @@ object JDBCLimitRDD extends Logging {
       val typeName = rsmd.getColumnTypeName(i + 1)
       val fieldSize = rsmd.getPrecision(i + 1)
       val fieldScale = rsmd.getScale(i + 1)
-      val isSigned = {
-        try {
-          rsmd.isSigned(i + 1)
-        } catch {
+      val isSigned =
+        try rsmd.isSigned(i + 1)
+        catch {
           // Workaround for HIVE-14684:
           case e: SQLException
               if e.getMessage == "Method not supported" &&
                 rsmd.getClass.getName == "org.apache.hive.jdbc.HiveResultSetMetaData" =>
             true
         }
-      }
-      val nullable = if (alwaysNullable) {
-        true
-      } else {
-        rsmd.isNullable(i + 1) != ResultSetMetaData.columnNoNulls
-      }
+      val nullable =
+        if (alwaysNullable) true else rsmd.isNullable(i + 1) != ResultSetMetaData.columnNoNulls
       val metadata = new MetadataBuilder()
       metadata.putLong("scale", fieldScale)
 
@@ -320,12 +325,12 @@ object JDBCLimitRDD extends Logging {
       case java.sql.Types.VARBINARY => BinaryType
       case java.sql.Types.VARCHAR => StringType
       case _ =>
-        throw new RuntimeException(s"Unsupported type: $sqlType ")
+        throw QueryExecutionErrors.unrecognizedSqlTypeError(sqlType)
       // scalastyle:on
     }
 
     if (answer == null) {
-      throw new RuntimeException(s"Unsupported type: $sqlType ")
+      throw QueryExecutionErrors.unsupportedJdbcTypeError(JDBCType.valueOf(sqlType).getName)
     }
     answer
   }

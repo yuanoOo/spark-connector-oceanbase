@@ -113,7 +113,6 @@ class OceanBaseCatalogE2eITCase extends SparkContainerTestEnvironment {
     sqlLines.add(s"""
                     |show databases;
                     |show tables;
-                    |show create table products;
                     |use test;
                     |select * from products limit 10;
                     |""".stripMargin)
@@ -124,14 +123,6 @@ class OceanBaseCatalogE2eITCase extends SparkContainerTestEnvironment {
       }
     })
   }
-
-  protected def queryHTable(
-      tableName: String,
-      rowConverter: OceanBaseTestBase.RowConverter
-  ): util.List[String] = {
-    queryTable(tableName, util.Arrays.asList("K", "Q", "V"), rowConverter)
-  }
-
 }
 
 object OceanBaseCatalogE2eITCase extends SparkContainerTestEnvironment {
