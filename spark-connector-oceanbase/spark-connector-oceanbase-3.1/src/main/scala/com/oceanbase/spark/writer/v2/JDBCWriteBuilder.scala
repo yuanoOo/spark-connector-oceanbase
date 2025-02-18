@@ -16,6 +16,7 @@
 package com.oceanbase.spark.writer.v2
 
 import com.oceanbase.spark.dialect.OceanBaseDialect
+
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.write._
 import org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions
@@ -35,7 +36,7 @@ class JDBCBatchWrite(
     option: JDBCOptions,
     dialect: OceanBaseDialect
 ) extends BatchWrite
-    with DataWriterFactory {
+  with DataWriterFactory {
 
   override def createBatchWriterFactory(
       info: PhysicalWriteInfo

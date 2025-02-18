@@ -20,22 +20,14 @@ import com.oceanbase.spark.config.OceanBaseConfig
 import com.oceanbase.spark.directload.{DirectLoader, DirectLoadUtils}
 
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.connector.write.{
-  BatchWrite,
-  DataWriter,
-  DataWriterFactory,
-  PhysicalWriteInfo,
-  WriteBuilder,
-  WriterCommitMessage
-}
+import org.apache.spark.sql.connector.write.{BatchWrite, DataWriter, DataWriterFactory, PhysicalWriteInfo, WriteBuilder, WriterCommitMessage}
 import org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions
 import org.apache.spark.sql.types.StructType
 
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 
 /** Direct-load writing implementation based on Spark DataSource V2 API. */
-case class DirectLoadWriteBuilderV2(schema: StructType, options: JDBCOptions)
-    extends WriteBuilder {
+case class DirectLoadWriteBuilderV2(schema: StructType, options: JDBCOptions) extends WriteBuilder {
   override def buildForBatch(): BatchWrite = {
     val map = options.parameters ++ Map(
       OceanBaseConfig.SCHEMA_NAME.getKey -> options.parameters(
@@ -49,10 +41,9 @@ case class DirectLoadWriteBuilderV2(schema: StructType, options: JDBCOptions)
   }
 }
 
-/** This will be performed on the Driver side and no serialization is required.
-  */
+/** This will be performed on the Driver side and no serialization is required. */
 class DirectLoadBatchWrite(schema: StructType, oceanBaseConfig: OceanBaseConfig)
-    extends BatchWrite {
+  extends BatchWrite {
 
   private val directLoader: DirectLoader =
     DirectLoadUtils.buildDirectLoaderFromSetting(oceanBaseConfig)
