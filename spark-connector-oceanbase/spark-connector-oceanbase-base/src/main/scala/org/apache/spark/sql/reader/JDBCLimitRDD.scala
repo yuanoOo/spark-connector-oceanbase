@@ -325,12 +325,12 @@ object JDBCLimitRDD extends Logging {
       case java.sql.Types.VARBINARY => BinaryType
       case java.sql.Types.VARCHAR => StringType
       case _ =>
-        throw QueryExecutionErrors.unrecognizedSqlTypeError(sqlType)
+        throw new RuntimeException(s"Unsupported type: $sqlType ")
       // scalastyle:on
     }
 
     if (answer == null) {
-      throw QueryExecutionErrors.unsupportedJdbcTypeError(JDBCType.valueOf(sqlType).getName)
+      throw new RuntimeException(s"Unsupported type: $sqlType ")
     }
     answer
   }
