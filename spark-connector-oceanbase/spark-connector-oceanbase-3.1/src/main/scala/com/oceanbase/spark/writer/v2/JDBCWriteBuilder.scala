@@ -20,22 +20,19 @@ import com.oceanbase.spark.dialect.OceanBaseDialect
 
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.write._
-import org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions
 import org.apache.spark.sql.types.StructType
 
 class JDBCWriteBuilder(
     schema: StructType,
-    option: JDBCOptions,
     config: OceanBaseConfig,
     dialect: OceanBaseDialect
 ) extends WriteBuilder {
   override def buildForBatch(): BatchWrite =
-    new JDBCBatchWrite(schema, option, config, dialect)
+    new JDBCBatchWrite(schema, config, dialect)
 }
 
 class JDBCBatchWrite(
     schema: StructType,
-    option: JDBCOptions,
     config: OceanBaseConfig,
     dialect: OceanBaseDialect
 ) extends BatchWrite
