@@ -60,6 +60,8 @@ public class DirectLoaderBuilder implements Serializable {
 
     private String executionId;
 
+    private ObDirectLoadConnection directLoadConnection = null;
+
     public DirectLoaderBuilder host(String host) {
         this.host = host;
         return this;
@@ -165,12 +167,18 @@ public class DirectLoaderBuilder implements Serializable {
 
     private ObDirectLoadConnection buildConnection(int writeThreadNum)
             throws ObDirectLoadException {
-        return ObDirectLoadManager.getConnectionBuilder()
-                .setServerInfo(host, port)
-                .setLoginInfo(tenant, user, password, schema)
-                .setHeartBeatInfo(heartBeatTimeout, heartBeatInterval)
-                .enableParallelWrite(writeThreadNum)
-                .build();
+        synchronized (this) {
+            if (directLoadConnection == null) {
+                directLoadConnection =
+                        ObDirectLoadManager.getConnectionBuilder()
+                                .setServerInfo(host, port)
+                                .setLoginInfo(tenant, user, password, schema)
+                                .setHeartBeatInfo(heartBeatTimeout, heartBeatInterval)
+                                .enableParallelWrite(writeThreadNum)
+                                .build();
+            }
+            return directLoadConnection;
+        }
     }
 
     private ObDirectLoadStatement buildStatement(ObDirectLoadConnection connection)
