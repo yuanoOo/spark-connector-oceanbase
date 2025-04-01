@@ -64,7 +64,7 @@ public class DirectLoaderBuilder implements Serializable {
 
     private String executionId;
 
-    private final ConcurrentHashMap<String, ObDirectLoadConnection> directLoadConnMap =
+    private static final ConcurrentHashMap<String, ObDirectLoadConnection> directLoadConnMap =
             new ConcurrentHashMap<>();
 
     public DirectLoaderBuilder host(String host) {
