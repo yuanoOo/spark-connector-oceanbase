@@ -64,7 +64,7 @@ public class DirectLoaderBuilder implements Serializable {
 
     private String executionId;
 
-    private static final ConcurrentHashMap<String, ObDirectLoadConnection> directLoadConnMap =
+    protected static final ConcurrentHashMap<String, ObDirectLoadConnection> directLoadConnMap =
             new ConcurrentHashMap<>();
 
     public DirectLoaderBuilder host(String host) {
@@ -147,6 +147,10 @@ public class DirectLoaderBuilder implements Serializable {
         return this;
     }
 
+    private String buildSchemaTableName() {
+        return String.format("%s.%s#%s", schema, table, tenant);
+    }
+
     public DirectLoader build() {
         try {
             ObDirectLoadConnection obDirectLoadConnection = buildConnection(writeThreadNum);
@@ -154,14 +158,14 @@ public class DirectLoaderBuilder implements Serializable {
             if (StringUtils.isNotBlank(executionId)) {
                 return new DirectLoader(
                         this,
-                        String.format("%s.%s", schema, table),
+                        buildSchemaTableName(),
                         obDirectLoadStatement,
                         obDirectLoadConnection,
                         executionId);
             } else {
                 return new DirectLoader(
                         this,
-                        String.format("%s.%s", schema, table),
+                        buildSchemaTableName(),
                         obDirectLoadStatement,
                         obDirectLoadConnection);
             }
@@ -172,7 +176,7 @@ public class DirectLoaderBuilder implements Serializable {
 
     private ObDirectLoadConnection buildConnection(int writeThreadNum)
             throws ObDirectLoadException {
-        String tableName = String.format("%s.%s.%s", tenant, schema, table);
+        String tableName = buildSchemaTableName();
         ObDirectLoadConnection conn =
                 directLoadConnMap.computeIfAbsent(
                         tableName,
