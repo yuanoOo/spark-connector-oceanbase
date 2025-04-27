@@ -158,11 +158,11 @@ create database test;
 -- use and switch databases
 use your_oceanbase_db;
 
--- show tables in test
+-- show tables in database
 show tables;
 
--- create table test1
-CREATE TABLE test.test1(
+-- create table
+CREATE TABLE test.test(
   user_id BIGINT COMMENT 'test_for_key',
   name VARCHAR(255)
 )
@@ -170,8 +170,24 @@ PARTITIONED BY (bucket(16, user_id))
 COMMENT 'test_for_table_create'
 TBLPROPERTIES('replica_num' = 2, COMPRESSION = 'zstd_1.0');
 
--- drop table test1
-drop table test.test1;
+-- read
+select * from test limit 100;
+
+-- write
+insert into table test.test
+select * from spark_catalog.default.t1;
+
+-- CTAS
+create table test as select * from t1;
+
+-- delete
+delete from test where id in (101, 102, 103);
+
+-- truncate
+truncate table test;
+
+-- drop table test
+drop table test.test;
 
 ```
 
